@@ -34,9 +34,9 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "@vue/composition-api";
-import { useRouter } from "@/router/use-router";
 import { Todo } from "@/interface/todo";
+import { useRouter } from "@/router/use-router";
+import { defineComponent, ref } from "@vue/composition-api";
 
 export default defineComponent({
   setup() {
@@ -60,10 +60,10 @@ export default defineComponent({
       const dataset: Todo = {
         id: id,
         status: 0,
-        title: "title",
-        description: "description",
-        startDate: "2022/12/12",
-        endDate: "2022/12/30",
+        title: title.value,
+        description: description.value,
+        startDate: startDate.value,
+        endDate: endDate.value,
       };
       dataList.push(dataset);
       window.localStorage.setItem("todoList", JSON.stringify(dataList));

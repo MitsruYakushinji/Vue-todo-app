@@ -5,7 +5,12 @@
     </div>
     <div class="main-area">
       <div class="my-5">
-        <input class="w-[500px]" placeholder="タイトル" type="text" />
+        <input
+          class="w-[500px]"
+          placeholder="タイトル"
+          type="text"
+          v-model="todo.title"
+        />
       </div>
       <div class="my-5">
         <textarea
@@ -15,24 +20,37 @@
           id=""
           cols="30"
           rows="10"
+          v-model="todo.description"
         ></textarea>
       </div>
       <div class="flex justify-between my-5">
-        <input class="w-[230px]" type="date" />
+        <input class="w-[230px]" type="date" v-model="todo.startDate" />
         <p>~</p>
-        <input class="w-[230px]" type="date" />
+        <input class="w-[230px]" type="date" v-model="todo.endDate" />
       </div>
       <div class="my-5">
-        <button class="update-button">更新</button>
-        <button class="delete-button">削除</button>
+        <button
+          class="update-button"
+          @click="updateTodo"
+          @click.prevent="$router.push('/')"
+        >
+          更新
+        </button>
+        <button
+          class="delete-button"
+          @click="deleteTodo"
+          @click.prevent="$router.push('/')"
+        >
+          削除
+        </button>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "@vue/composition-api";
-import { useRoute, useRouter } from "@/router/use-router";
 import { Todo } from "@/interface/todo";
+import { useRoute, useRouter } from "@/router/use-router";
+import { defineComponent, ref } from "@vue/composition-api";
 
 export default defineComponent({
   setup() {
@@ -42,16 +60,41 @@ export default defineComponent({
     /**
      * ローカルストレージのデータを取得・保持
      */
+    const todoId = Number(route.params.id);
+    let todoList: Todo[] = JSON.parse(
+      window.localStorage.getItem("todoList") ?? "[]"
+    );
+    const todo = ref(todoList.find((item) => item.id === todoId));
 
     /**
      * 予定の更新処理
      */
+    const updateTodo = () => {
+      const index = todoList.findIndex((item) => item.id === todoId);
+      if (index !== -1) {
+        if (todo.value) {
+          todoList[index] = todo.value;
+        }
+        window.localStorage.setItem("todoList", JSON.stringify(todoList));
+      }
+    };
 
     /**
      * 予定の削除処理
      */
+    const deleteTodo = () => {
+      const index = todoList.findIndex((item) => item.id === todoId);
+      if (index !== -1) {
+        todoList.splice(index, 1);
+        window.localStorage.setItem("todoList", JSON.stringify(todoList));
+      }
+    };
 
-    return {};
+    return {
+      todo,
+      updateTodo,
+      deleteTodo,
+    };
   },
 });
 </script>
